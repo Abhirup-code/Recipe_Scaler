@@ -1,0 +1,132 @@
+:root {
+  --bg: #fffaf3;
+  --surface: #ffffff;
+  --text: #2a2118;
+  --muted: #6b5d4f;
+  --accent: #b5421b;
+  --accent-text: #ffffff;
+  --border: #e7dccd;
+  --radius: 14px;
+  --shadow: 0 1px 3px rgb(0 0 0 / 0.08);
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1712;
+    --surface: #26201a;
+    --text: #f3ece3;
+    --muted: #c4b6a6;
+    --accent: #f08a5d;
+    --accent-text: #1b1712;
+    --border: #3d342b;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+a { color: var(--accent); }
+img { max-width: 100%; height: auto; display: block; }
+h1, h2, h3 { line-height: 1.2; }
+h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); margin: 0.3em 0; }
+h2 { font-size: 1.35rem; margin: 0; }
+
+.skip-link { position: absolute; left: -999px; }
+.skip-link:focus { left: 1rem; top: 1rem; background: var(--surface); padding: 0.5rem 1rem; z-index: 10; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.site-header, main, .site-footer { max-width: 960px; margin: 0 auto; padding: 0 1rem; }
+.site-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; padding-block: 1rem; }
+.brand { font-weight: 800; font-size: 1.2rem; text-decoration: none; color: var(--text); }
+.site-header nav { display: flex; gap: 1rem; }
+.site-header nav a { min-height: 44px; display: inline-flex; align-items: center; }
+.site-footer { color: var(--muted); font-size: 0.9rem; padding-block: 2rem; }
+
+.hero { padding-block: 1rem 0.5rem; }
+.hero p, .lede { color: var(--muted); font-size: 1.1rem; }
+.eyebrow { color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem; margin: 0; }
+.muted { color: var(--muted); }
+.empty { padding: 2rem 0; }
+
+.search input {
+  width: 100%; font: inherit; padding: 0.8rem 1rem; min-height: 48px;
+  border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text);
+}
+
+.grid { display: grid; gap: 1rem; margin-top: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.card a { color: var(--text); text-decoration: none; }
+.card h2 { margin: 0.75rem 1rem 0.25rem; font-size: 1.2rem; }
+.card p { margin: 0 1rem 1rem; }
+
+.recipe .hero-image { border-radius: var(--radius); margin: 1rem 0; width: 100%; }
+.facts { display: flex; gap: 1.5rem; margin: 0.5rem 0; }
+.facts dt { color: var(--muted); font-size: 0.85rem; }
+.facts dd { margin: 0; font-weight: 700; }
+
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin: 1rem 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+
+.button, .segmented button, .stepper button, .timer button {
+  font: inherit; min-height: 44px; padding: 0.5rem 1rem; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer;
+  text-decoration: none; display: inline-flex; align-items: center; justify-content: center;
+}
+.button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 700; }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+.link-button { background: none; border: none; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 0.25rem; }
+
+.segmented { display: inline-flex; gap: 0.25rem; }
+.segmented button[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+
+.stepper { display: inline-flex; align-items: center; gap: 0.75rem; }
+.stepper button { width: 44px; padding: 0; font-size: 1.3rem; }
+.stepper output { font-weight: 700; min-width: 7.5ch; text-align: center; }
+
+.ingredients, .checklist, .list-recipes { list-style: none; padding: 0; margin: 1rem 0; }
+.ingredients li, .checklist li, .list-recipes li {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.25rem 1rem;
+  padding: 0.5rem 0; border-bottom: 1px solid var(--border);
+}
+.subs { flex-basis: 100%; background: var(--bg); border-radius: 10px; padding: 0.5rem 1rem; }
+.subs ul { margin: 0; padding-left: 1.2rem; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+.steps { padding-left: 1.4rem; }
+.steps li { margin-bottom: 0.9rem; padding-left: 0.25rem; }
+
+.checklist label { display: flex; gap: 0.75rem; align-items: flex-start; min-height: 44px; cursor: pointer; }
+.checklist input { width: 22px; height: 22px; margin-top: 0.2rem; accent-color: var(--accent); }
+.checklist .done span { text-decoration: line-through; color: var(--muted); }
+
+.cook-mode {
+  position: fixed; inset: 0; z-index: 20; background: var(--bg); padding: 1.25rem;
+  display: flex; flex-direction: column; gap: 1rem; overflow-y: auto;
+}
+.cook-top { display: flex; justify-content: space-between; align-items: center; }
+.cook-mode progress { width: 100%; accent-color: var(--accent); }
+.cook-step { font-size: clamp(1.4rem, 5vw, 2.1rem); line-height: 1.4; flex: 1; margin: 0; }
+.cook-nav { display: flex; gap: 1rem; }
+.cook-nav .button { flex: 1; min-height: 56px; }
+.timer { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.timer-time { font-size: 2rem; font-variant-numeric: tabular-nums; font-weight: 700; }
+.timer-done { color: var(--accent); font-size: 1.2rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; }
+}
