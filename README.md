@@ -76,11 +76,6 @@ src/
 tests/          unit and component tests
 ```
 
-## Deploying your own copy
-
-1. Fork the repo.
-2. In **Settings > Pages**, set **Source** to **GitHub Actions**.
-3. Push to `main`. CI tests, checks Lighthouse, builds, and deploys to `https://<you>.github.io/<repo>/`.
 
 ## License
 
