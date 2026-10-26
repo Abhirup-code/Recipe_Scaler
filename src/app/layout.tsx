@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { Analytics } from "@/components/Analytics";
+import { ServiceWorker } from "@/components/ServiceWorker";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -34,10 +36,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </Link>
           <nav aria-label="Main">
             <Link href="/">Recipes</Link>
+            <Link href="/saved/">Saved</Link>
             <Link href="/shopping-list/">Shopping list</Link>
           </nav>
         </header>
         <main id="main">{children}</main>
+        <Analytics />
+        <ServiceWorker />
         <footer className="site-footer">
           <p>
             Built by Abhirup Khan with Next.js, React, and TypeScript.{" "}
