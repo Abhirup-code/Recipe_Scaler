@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { track } from "@/lib/analytics";
 import { curatedProvider, type Substitution, type SubstitutionContext, type SubstitutionProvider } from "@/lib/substitutions";
 
 /** "Out of it?" button that shows substitutes for one ingredient. */
@@ -20,6 +21,7 @@ export function Substitutes({
   async function toggle() {
     const next = !open;
     setOpen(next);
+    if (next) track("view_substitutes", { ingredient });
     if (next && items === null) setItems(await provider.suggest(ingredient, context));
   }
 

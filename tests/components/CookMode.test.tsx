@@ -62,3 +62,16 @@ describe("CookMode", () => {
     Reflect.deleteProperty(navigator, "wakeLock");
   });
 });
+
+describe("CookMode callbacks", () => {
+  it("reports start and finish", async () => {
+    const onStart = vi.fn();
+    const onFinish = vi.fn();
+    const user = userEvent.setup();
+    render(<CookMode title="T" steps={[{ text: "Only step." }]} label="Go" onStart={onStart} onFinish={onFinish} />);
+    await user.click(screen.getByRole("button", { name: "Go" }));
+    expect(onStart).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole("button", { name: "Done" }));
+    expect(onFinish).toHaveBeenCalledTimes(1);
+  });
+});

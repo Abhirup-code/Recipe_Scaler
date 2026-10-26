@@ -12,7 +12,19 @@ interface WakeLockSentinelLike {
  * Full-screen, one-step-at-a-time view for cooking. Big text for reading from across the
  * counter, arrow keys or buttons to move, timers on timed steps, and the screen kept awake.
  */
-export function CookMode({ title, steps }: { title: string; steps: Step[] }) {
+export function CookMode({
+  title,
+  steps,
+  label = "Start cook mode",
+  onStart,
+  onFinish,
+}: {
+  title: string;
+  steps: Step[];
+  label?: string;
+  onStart?: () => void;
+  onFinish?: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const [awake, setAwake] = useState(false);
@@ -31,6 +43,7 @@ export function CookMode({ title, steps }: { title: string; steps: Step[] }) {
   async function start() {
     setIndex(0);
     setOpen(true);
+    onStart?.();
     try {
       const wakeLock = (navigator as Navigator & { wakeLock?: { request(type: "screen"): Promise<WakeLockSentinelLike> } }).wakeLock;
       if (wakeLock) {
@@ -60,7 +73,7 @@ export function CookMode({ title, steps }: { title: string; steps: Step[] }) {
   return (
     <>
       <button ref={openerRef} type="button" className="button primary" onClick={start}>
-        Start cook mode
+        {label}
       </button>
       {open && step && (
         <div
@@ -90,7 +103,14 @@ export function CookMode({ title, steps }: { title: string; steps: Step[] }) {
               Back
             </button>
             {last ? (
-              <button type="button" className="button primary" onClick={close}>
+              <button
+                type="button"
+                className="button primary"
+                onClick={() => {
+                  onFinish?.();
+                  close();
+                }}
+              >
                 Done
               </button>
             ) : (
