@@ -5,3 +5,4 @@ import type { UnitSystem } from "./types";
 export const unitSystemStore = createStore<UnitSystem>("recipe-scaler:units", "us");
 export const shoppingListStore = createStore<ListEntry[]>("recipe-scaler:list", []);
 export const checkedStore = createStore<string[]>("recipe-scaler:checked", []);
+export const savedStore = createStore<string[]>("recipe-scaler:saved", []);

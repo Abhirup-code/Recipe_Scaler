@@ -92,6 +92,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .link-button { background: none; border: none; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 0.25rem; }
 
 .segmented { display: inline-flex; gap: 0.25rem; }
+.save-button[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); font-weight: 700; }
 .segmented button[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
 
 .stepper { display: inline-flex; align-items: center; gap: 0.75rem; }
@@ -129,4 +130,17 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; transition: none !important; }
+}
+
+/* Print: just the recipe, in black and white, without buttons or navigation. */
+@media print {
+  :root { --bg: #fff; --surface: #fff; --text: #000; --muted: #333; --accent: #000; --border: #bbb; }
+  body { font-size: 11pt; }
+  .site-header nav, .site-footer, .skip-link, .no-print, .actions, .segmented, .stepper button,
+  .link-button, .subs, .cook-mode, .hero-image { display: none !important; }
+  .panel { border: none; padding: 0; box-shadow: none; }
+  .recipe h1 { font-size: 20pt; }
+  .ingredients li { border-bottom: none; padding: 0.1rem 0; }
+  .steps li, .ingredients li { break-inside: avoid; }
+  a { color: #000; text-decoration: none; }
 }

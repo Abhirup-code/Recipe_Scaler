@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { PrintButton } from "@/components/PrintButton";
 import { RecipePanel } from "@/components/RecipePanel";
+import { SaveButton } from "@/components/SaveButton";
 import { getRecipe, recipes } from "@/data/recipes";
 import { humanDuration } from "@/lib/duration";
 import { recipeJsonLd, serializeJsonLd } from "@/lib/schema";
@@ -63,6 +65,10 @@ export default async function RecipePage({ params }: Props) {
             <dd>{humanDuration(recipe.prepMinutes + recipe.cookMinutes)}</dd>
           </div>
         </dl>
+        <div className="actions no-print">
+          <SaveButton slug={recipe.slug} name={recipe.name} />
+          <PrintButton slug={recipe.slug} />
+        </div>
       </header>
       <Image
         className="hero-image"
