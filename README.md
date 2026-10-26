@@ -27,6 +27,10 @@ Built with **Next.js, React, and TypeScript**, tested with **Vitest and React Te
 | **"Out of it?" substitutions** | Suggested swaps for common ingredients (buttermilk, eggs, butter, soy sauce, ...), with notes on what changes in the dish. |
 | **Shopping list** | Add recipes at any serving size. Matching ingredients are combined even when recipes use different units (2 tbsp + 1 cup of milk), and you can check items off or copy the list. |
 | **Search** | Filter by name, cuisine, tag, or ingredient ("lentils", "vegan quick"). |
+| **Saved recipes** | Tap ♡ Save on any recipe to keep it on a Saved page, newest first. |
+| **Works offline** | Installable on a phone's home screen. A service worker keeps every recipe you have opened available without internet, and shows a friendly page for ones you have not. |
+| **Print** | A clean, ink-friendly printout of the ingredients and steps, without buttons or menus. |
+| **Analytics and an A/B test** | Optional Google Analytics 4 events (cook mode started and finished, servings and units changed, saves, prints, list adds) plus an A/B test of the cook-mode button label. Off unless a GA4 ID is configured, and never on for visitors with Do Not Track or Global Privacy Control. |
 | **SEO** | Every recipe page is pre-rendered HTML with [schema.org Recipe](https://developers.google.com/search/docs/appearance/structured-data/recipe) structured data, canonical URLs, Open Graph tags, a sitemap, and robots.txt. |
 
 ## Quality
@@ -36,7 +40,9 @@ Built with **Next.js, React, and TypeScript**, tested with **Vitest and React Te
 | Lighthouse (home page, mobile) | Performance 100, Accessibility 100, Best Practices 100, SEO 100 |
 | Lighthouse (recipe page, mobile) | Performance 99, Accessibility 100, Best Practices 100, SEO 100 |
 | Core Web Vitals (lab) | LCP 1.2 to 1.7 s, CLS 0 |
-| Tests | 74 tests (unit and component), 99% line coverage, 90% coverage gate in CI |
+| Unit and component tests | 92 tests (Vitest, React Testing Library), 99% line coverage, 90% coverage gate in CI |
+| End-to-end tests | 15 Playwright tests in a mobile browser: the full cooking flow, saved recipes, shopping list, print view, offline caching, and install manifest |
+| Accessibility | axe-core scans of every page and of cook mode find no WCAG 2.1 AA violations; any new violation fails CI |
 
 CI fails a pull request if Lighthouse drops below 90 for performance or 95 for accessibility, best practices, or SEO, or if layout shift goes above 0.1.
 
@@ -47,11 +53,13 @@ CI fails a pull request if Lighthouse drops below 90 for performance or 95 for a
 - **Saved preferences without hydration bugs.** The unit choice and shopping list live in `localStorage` behind a small store used with React's `useSyncExternalStore`. Server and first render agree, saved values appear right after, and open tabs stay in sync.
 - **Safe structured data.** JSON-LD is serialized with `<` escaped, so recipe text can never close the script tag and inject code.
 - **Ready for AI substitutions.** Substitutions come from a `SubstitutionProvider` interface. Today it reads a curated list; an LLM-backed provider (behind a server route that keeps the API key secret) can be added without changing the UI.
+- **A/B test that survives hydration.** Each visitor keeps one variant forever. The end-to-end tests caught a bug where React's first render (with no saved value yet) re-randomized returning visitors; the fix reads the saved value directly, and a regression test renders on the "server" and hydrates to prove it.
+- **Privacy-first analytics.** Nothing loads without a GA4 ID, Do Not Track and Global Privacy Control are respected, and tracking calls can never break the page.
 - **Accessible by default.** Semantic HTML, labelled controls, 44 px tap targets, visible focus, a skip link, screen-reader announcements for results and timers, dark mode, and reduced-motion support.
 
 ## Tech stack
 
-Next.js 16 (App Router, static export), React 19, TypeScript (strict), CSS with custom properties, Vitest, React Testing Library, ESLint, Lighthouse CI, GitHub Actions, GitHub Pages, Dependabot.
+Next.js 16 (App Router, static export), React 19, TypeScript (strict), CSS with custom properties, service worker (PWA), Google Analytics 4, Vitest, React Testing Library, Playwright, axe-core, ESLint, Lighthouse CI, GitHub Actions, GitHub Pages, Dependabot.
 
 ## Run locally
 
@@ -63,17 +71,23 @@ npm run dev            # http://localhost:3000
 npm test               # unit and component tests
 npm run lint && npm run typecheck
 npm run build          # static site in ./out
+npx playwright install chromium && npm run test:e2e   # browser tests against ./out
 ```
+
+To turn on analytics, create a free Google Analytics 4 property and build with `NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX` (in GitHub Actions, add it as a repository variable and pass it to the build step).
 
 ## Project structure
 
 ```
 src/
-  app/          pages: home, recipe pages, shopping list, sitemap, robots
-  components/   interactive pieces: scaling panel, cook mode, timers, shopping list
+  app/          pages: home, recipes, saved, shopping list, offline, sitemap, robots, manifest
+  components/   interactive pieces: scaling panel, cook mode, timers, saving, shopping list
   data/         the recipes
-  lib/          tested logic: units, formatting, scaling, shopping list, schema, storage
+  lib/          tested logic: units, formatting, scaling, shopping list, schema, storage,
+                analytics, A/B test
+public/sw.js    service worker for offline use
 tests/          unit and component tests
+e2e/            Playwright end-to-end and accessibility tests
 ```
 
 
