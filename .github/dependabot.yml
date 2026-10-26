@@ -3,6 +3,13 @@ updates:
   - package-ecosystem: npm
     directory: /
     schedule: { interval: weekly }
+    ignore:
+      # typescript-eslint does not support TypeScript 7 yet; revisit when it does.
+      - dependency-name: typescript
+        versions: [">=7"]
+      # Node type definitions must match the Node version the site is built with (22).
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       next-react:
         patterns: ["next", "react", "react-dom", "eslint-config-next", "@types/react", "@types/react-dom"]
