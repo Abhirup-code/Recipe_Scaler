@@ -36,6 +36,7 @@ Built with **Next.js, React, and TypeScript**, tested with **Vitest and React Te
 | **Shopping list** | Add recipes at any serving size. Matching ingredients are combined even when recipes use different units (2 tbsp + 1 cup of milk), and you can check items off or copy the list. |
 | **12 recipes** | Indian, Mexican, Greek, Chinese, Italian, North African, and American dishes across breakfast, mains, salads, snacks, and dessert, each with its own illustration. A data test checks every recipe for both image sizes, valid units, sensible servings, and steps. |
 | **Search** | Filter by name, cuisine, tag, or ingredient ("lentils", "vegan quick"). |
+| **Cooked recently** | Finishing cook mode remembers the recipe, the day, and how many times you have made it. The home page then shows your four most recent, like "Cooked yesterday · 3 times", so favorites are one tap away. Stored on your device only and validated when read back. |
 | **Saved recipes** | Tap ♡ Save on any recipe to keep it on a Saved page, newest first. |
 | **Works offline** | Installable on a phone's home screen. A service worker keeps every recipe you have opened available without internet, and shows a friendly page for ones you have not. |
 | **Print** | A clean, ink-friendly printout of the ingredients and steps, without buttons or menus. |
@@ -49,8 +50,8 @@ Built with **Next.js, React, and TypeScript**, tested with **Vitest and React Te
 | Lighthouse (home page, mobile) | Performance 100, Accessibility 100, Best Practices 100, SEO 100 |
 | Lighthouse (recipe page, mobile) | Performance 99, Accessibility 100, Best Practices 100, SEO 100 |
 | Core Web Vitals (lab) | LCP 1.2 to 1.7 s, CLS 0 |
-| Unit and component tests | 282 tests (Vitest, React Testing Library), 99% line coverage, 90% coverage gate in CI |
-| End-to-end tests | 27 Playwright tests in a mobile browser: the full cooking flow, hands-free voice control, scaling to what you have, the pantry, importing a recipe, shared links, saved recipes, shopping list, print view, offline caching, and install manifest |
+| Unit and component tests | 335 tests (Vitest, React Testing Library), 99% line coverage, 90% coverage gate in CI |
+| End-to-end tests | 30 Playwright tests in a mobile browser: the full cooking flow, recently cooked, editing and backing up imported recipes, hands-free voice control, scaling to what you have, the pantry, importing a recipe, shared links, saved recipes, shopping list, print view, offline caching, and install manifest |
 | Accessibility | axe-core scans of every page, of cook mode, voice mode, the scaling form, a filled pantry, the import preview, and an imported recipe in light and dark themes find no WCAG 2.1 AA violations; any new violation fails CI |
 
 CI fails a pull request if Lighthouse drops below 90 for performance or 95 for accessibility, best practices, or SEO, or if layout shift goes above 0.1.

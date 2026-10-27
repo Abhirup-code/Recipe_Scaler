@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { track } from "@/lib/analytics";
+import { cookedStore, recordCooked, validCooked } from "@/lib/cooked";
 import { COOK_BUTTON_EXPERIMENT } from "@/lib/experiment";
 import { scaleFactor } from "@/lib/ingredients";
 import { readSharedView } from "@/lib/share";
@@ -92,7 +93,10 @@ export function RecipePanel({ recipe, shareable = true }: { recipe: Recipe; shar
           steps={recipe.steps}
           label={COOK_BUTTON_EXPERIMENT.variants[variant]}
           onStart={() => track("start_cook_mode", { recipe: recipe.slug, variant })}
-          onFinish={() => track("finish_cook_mode", { recipe: recipe.slug, variant })}
+          onFinish={() => {
+            track("finish_cook_mode", { recipe: recipe.slug, variant });
+            cookedStore.set(recordCooked(validCooked(cookedStore.getSnapshot()), recipe.slug, new Date()));
+          }}
         />
         {inList ? (
           <Link className="button" href="/shopping-list/">

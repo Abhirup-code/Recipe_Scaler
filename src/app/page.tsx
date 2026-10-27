@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RecentlyCooked } from "@/components/RecentlyCooked";
 import { RecipeSearch } from "@/components/RecipeSearch";
 import { recipes } from "@/data/recipes";
 
@@ -22,6 +23,7 @@ export default function HomePage() {
           </Link>
         </p>
       </section>
+      <RecentlyCooked />
       <RecipeSearch recipes={recipes} />
     </>
   );
