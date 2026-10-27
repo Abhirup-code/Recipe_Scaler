@@ -6,6 +6,7 @@ import { expect, test } from "./fixtures";
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     const spoken: string[] = [];
+    let reading = 0; // utterances started but not yet finished
     const instances: FakeRecognition[] = [];
     class FakeRecognition {
       running = false;
@@ -31,6 +32,8 @@ test.beforeEach(async ({ page }) => {
       SpeechRecognition: FakeRecognition,
       webkitSpeechRecognition: FakeRecognition,
       __spoken: spoken,
+      // Ready when a recognizer is listening and the app is not reading a step aloud.
+      __ready: () => instances.some((r) => r.running) && reading === 0,
       __say: (transcript: string) =>
         instances
           .filter((r) => r.running)
@@ -40,14 +43,23 @@ test.beforeEach(async ({ page }) => {
     if (synth) {
       synth.speak = (u: SpeechSynthesisUtterance) => {
         spoken.push(u.text);
-        setTimeout(() => u.onend?.(new Event("end") as SpeechSynthesisEvent), 0);
+        reading += 1;
+        setTimeout(() => {
+          reading -= 1;
+          u.onend?.(new Event("end") as SpeechSynthesisEvent);
+        }, 50);
       };
     }
   });
 });
 
-const say = (page: import("@playwright/test").Page, text: string) =>
-  page.evaluate((t) => (window as unknown as { __say(t: string): void }).__say(t), text);
+type VoiceTestWindow = { __ready(): boolean; __say(t: string): void };
+
+/** Speak once the mic is listening and the app has finished reading aloud, as a person would. */
+async function say(page: import("@playwright/test").Page, text: string) {
+  await page.waitForFunction(() => (window as unknown as VoiceTestWindow).__ready());
+  await page.evaluate((t) => (window as unknown as VoiceTestWindow).__say(t), text);
+}
 
 test("cook hands-free: navigate, repeat, run the timer, and exit by voice", async ({ page }) => {
   await page.goto("/recipes/simple-shakshuka/");
