@@ -68,6 +68,11 @@ export function addMyRecipe(recipe: Recipe): void {
   myRecipesStore.set([recipe, ...validMyRecipes(myRecipesStore.getSnapshot())]);
 }
 
+/** Save changes to a recipe you imported, keeping its place in the list (issue #7). */
+export function updateMyRecipe(recipe: Recipe): void {
+  myRecipesStore.set(validMyRecipes(myRecipesStore.getSnapshot()).map((r) => (r.slug === recipe.slug ? recipe : r)));
+}
+
 export function removeMyRecipe(slug: string): void {
   myRecipesStore.set(validMyRecipes(myRecipesStore.getSnapshot()).filter((r) => r.slug !== slug));
   shoppingListStore.set(removeEntry(shoppingListStore.getSnapshot(), slug));

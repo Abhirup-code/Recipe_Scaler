@@ -20,7 +20,8 @@ export type AnalyticsEvent =
   | "share_recipe"
   | "import_recipe"
   | "backup_recipes"
-  | "restore_recipes";
+  | "restore_recipes"
+  | "edit_recipe";
 
 type Params = Record<string, string | number>;
 type Gtag = (command: "event" | "config" | "js", target: string | Date, params?: Params) => void;

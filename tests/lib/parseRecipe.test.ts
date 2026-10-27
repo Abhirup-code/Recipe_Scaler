@@ -1,4 +1,5 @@
-import { parseIngredient, parseQuantity, parseRecipeText, stepMinutes, toRecipe } from "@/lib/parseRecipe";
+import { recipes } from "@/data/recipes";
+import { amountText, parseIngredient, parseQuantity, parseRecipeText, recipeToText, stepMinutes, toRecipe } from "@/lib/parseRecipe";
 
 describe("parseQuantity", () => {
   it.each([
@@ -149,6 +150,45 @@ describe("toRecipe", () => {
       cookMinutes: 55,
       image: "",
       datePublished: "2026-10-27",
+    });
+  });
+});
+
+describe("recipeToText", () => {
+  it.each([
+    [2, "2"],
+    [1.5, "1 1/2"],
+    [0.75, "3/4"],
+    [0.333, "1/3"],
+    [2.25, "2 1/4"],
+    [1.1, "1.1"],
+    [500, "500"],
+  ])("writes %s as %j", (qty, text) => {
+    expect(amountText(qty)).toBe(text);
+  });
+
+  it("writes a recipe the parser reads back the same way", () => {
+    const original = parseRecipeText(WITH_HEADINGS);
+    const again = parseRecipeText(recipeToText(original));
+    expect(again.name).toBe(original.name);
+    expect(again.servings).toBe(original.servings);
+    expect(again.ingredients).toEqual(original.ingredients);
+    expect(again.steps).toEqual(original.steps);
+  });
+
+  it.each(recipes.map((r) => [r.name, r] as const))("round-trips the built-in %s", (_, recipe) => {
+    const again = parseRecipeText(recipeToText(recipe));
+    expect(again.name).toBe(recipe.name);
+    expect(again.servings).toBe(recipe.servings);
+    expect(again.steps.map((s) => s.text)).toEqual(recipe.steps.map((s) => s.text));
+    expect(again.ingredients).toHaveLength(recipe.ingredients.length);
+    again.ingredients.forEach((ing, i) => {
+      const want = recipe.ingredients[i]!;
+      expect(ing.name).toBe(want.name);
+      expect(ing.note).toBe(want.note);
+      expect(ing.unit ?? "piece").toBe(want.unit ?? "piece");
+      if (want.qty === undefined) expect(ing.qty).toBeUndefined();
+      else expect(ing.qty).toBeCloseTo(want.qty, 2);
     });
   });
 });

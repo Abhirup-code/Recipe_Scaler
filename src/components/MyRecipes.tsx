@@ -40,6 +40,9 @@ function MyRecipeView({ recipe }: { recipe: Recipe }) {
         <h1>{recipe.name}</h1>
         {recipe.cookMinutes > 0 && <p className="lede">Timed steps add up to {humanDuration(recipe.cookMinutes)}.</p>}
         <div className="actions no-print">
+          <Link className="button" href={`/import/?edit=${recipe.slug.slice(3)}`}>
+            Edit
+          </Link>
           <DeleteButton recipe={recipe} onDeleted={() => router.push("/my-recipes/")} />
         </div>
       </header>

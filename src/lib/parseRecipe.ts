@@ -228,3 +228,39 @@ export function toRecipe(parsed: ParsedRecipe, id: string, today: string): Recip
     steps: parsed.steps,
   };
 }
+
+const TEXT_FRACTIONS: ReadonlyArray<readonly [number, string]> = [
+  [1 / 8, "1/8"], [1 / 4, "1/4"], [1 / 3, "1/3"], [3 / 8, "3/8"], [1 / 2, "1/2"],
+  [5 / 8, "5/8"], [2 / 3, "2/3"], [3 / 4, "3/4"], [7 / 8, "7/8"],
+];
+
+/** An amount as a person would type it: 2, 1 1/2, 3/4, or a decimal when no kitchen fraction fits. */
+export function amountText(qty: number): string {
+  const whole = Math.floor(qty + 1e-9);
+  const rest = qty - whole;
+  if (rest < 0.002) return String(whole);
+  const match = TEXT_FRACTIONS.find(([v]) => Math.abs(rest - v) < 0.002);
+  if (match) return whole ? `${whole} ${match[1]}` : match[1];
+  return String(Math.round(qty * 1000) / 1000);
+}
+
+/**
+ * Write a recipe back out as text the parser reads the same way, so a saved recipe can be
+ * reopened in the import screen and corrected (issue #7).
+ */
+export function recipeToText(recipe: Pick<Recipe, "name" | "servings" | "ingredients" | "steps">): string {
+  const ingredient = (i: Ingredient) => {
+    const amount = i.qty === undefined ? "" : `${amountText(i.qty)} ${i.unit && i.unit !== "piece" ? `${i.unit} ` : ""}`;
+    return `- ${amount}${i.name}${i.note ? `, ${i.note}` : ""}`;
+  };
+  return [
+    recipe.name,
+    `Serves ${recipe.servings}`,
+    "",
+    "Ingredients",
+    ...recipe.ingredients.map(ingredient),
+    "",
+    "Instructions",
+    ...recipe.steps.map((s, n) => `${n + 1}. ${s.text}`),
+  ].join("\n");
+}

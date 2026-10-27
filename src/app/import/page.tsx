@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { ImportRecipe } from "@/components/ImportRecipe";
+import { Suspense } from "react";
+import { ImportPage } from "@/components/ImportPage";
 
 export const metadata: Metadata = {
   title: "Import a recipe",
@@ -7,14 +8,17 @@ export const metadata: Metadata = {
   alternates: { canonical: "/import/" },
 };
 
-export default function ImportPage() {
+export default function Page() {
   return (
-    <>
-      <h1>Import a recipe</h1>
-      <p className="lede">
-        Paste a recipe from anywhere. Then scale it, switch units, check it against your pantry, and cook it hands-free.
-      </p>
-      <ImportRecipe />
-    </>
+    <Suspense
+      fallback={
+        <>
+          <h1>Import a recipe</h1>
+          <p className="muted">Loading…</p>
+        </>
+      }
+    >
+      <ImportPage />
+    </Suspense>
   );
 }

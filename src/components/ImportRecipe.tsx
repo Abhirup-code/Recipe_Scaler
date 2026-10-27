@@ -5,9 +5,11 @@ import { useDeferredValue, useState } from "react";
 import { track } from "@/lib/analytics";
 import { displayIngredient, ingredientLine } from "@/lib/ingredients";
 import { MAX_SERVINGS } from "@/lib/limits";
-import { addMyRecipe, newRecipeId, recipeHref } from "@/lib/myRecipes";
-import { MAX_RECIPE_TEXT, parseRecipeText, toRecipe } from "@/lib/parseRecipe";
+import Link from "next/link";
+import { addMyRecipe, newRecipeId, recipeHref, updateMyRecipe } from "@/lib/myRecipes";
+import { MAX_RECIPE_TEXT, parseRecipeText, recipeToText, toRecipe } from "@/lib/parseRecipe";
 import { unitSystemStore } from "@/lib/stores";
+import type { Recipe } from "@/lib/types";
 import { useStore } from "@/lib/useStore";
 
 const EXAMPLE = `Easy Banana Bread
@@ -31,11 +33,14 @@ Instructions
 5. Bake for 55 minutes, until a skewer comes out clean.
 6. Cool in the pan for 10 minutes before slicing.`;
 
-/** Paste any recipe; see how it was read; fix the title or servings; save it to this device. */
-export function ImportRecipe() {
+/**
+ * Paste any recipe; see how it was read; fix the title or servings; save it to this device.
+ * With `editing`, the saved recipe opens as text so it can be corrected and saved in place.
+ */
+export function ImportRecipe({ editing }: { editing?: Recipe }) {
   const router = useRouter();
   const system = useStore(unitSystemStore);
-  const [text, setText] = useState("");
+  const [text, setText] = useState(() => (editing ? recipeToText(editing) : ""));
   const [name, setName] = useState<string | null>(null);
   const [servings, setServings] = useState<string | null>(null);
   const deferred = useDeferredValue(text);
@@ -48,11 +53,16 @@ export function ImportRecipe() {
 
   function save() {
     if (!parsed || !canSave) return;
-    const recipe = toRecipe(
-      { ...parsed, name: finalName.slice(0, 120), servings: servingCount },
-      newRecipeId(),
-      new Date().toISOString().slice(0, 10),
-    );
+    const details = { ...parsed, name: finalName.slice(0, 120), servings: servingCount };
+    if (editing) {
+      // Same id and date, so links and shopping list entries for this recipe keep working.
+      const recipe = { ...toRecipe(details, editing.slug.slice(3), editing.datePublished) };
+      updateMyRecipe(recipe);
+      track("edit_recipe", { ingredients: recipe.ingredients.length, steps: recipe.steps.length });
+      router.push(recipeHref(recipe));
+      return;
+    }
+    const recipe = toRecipe(details, newRecipeId(), new Date().toISOString().slice(0, 10));
     addMyRecipe(recipe);
     track("import_recipe", { ingredients: recipe.ingredients.length, steps: recipe.steps.length });
     router.push(recipeHref(recipe));
@@ -62,18 +72,20 @@ export function ImportRecipe() {
     <div className="import">
       <section className="panel" aria-labelledby="paste-heading">
         <div className="panel-head">
-          <h2 id="paste-heading">Paste a recipe</h2>
-          <button
-            type="button"
-            className="link-button"
-            onClick={() => {
-              setText(EXAMPLE);
-              setName(null);
-              setServings(null);
-            }}
-          >
-            Try an example
-          </button>
+          <h2 id="paste-heading">{editing ? "Fix the text" : "Paste a recipe"}</h2>
+          {!editing && (
+            <button
+              type="button"
+              className="link-button"
+              onClick={() => {
+                setText(EXAMPLE);
+                setName(null);
+                setServings(null);
+              }}
+            >
+              Try an example
+            </button>
+          )}
         </div>
         <label htmlFor="recipe-text" className="sr-only">
           Recipe text
@@ -92,7 +104,9 @@ export function ImportRecipe() {
           }}
         />
         <p className="muted">
-          Works best with “Ingredients” and “Instructions” headings. Everything stays on this device.
+          {editing
+            ? "Fix anything that was read wrong, then save. Each ingredient goes on its own line under “Ingredients”."
+            : "Works best with “Ingredients” and “Instructions” headings. Everything stays on this device."}
         </p>
       </section>
 
@@ -153,9 +167,16 @@ export function ImportRecipe() {
               </li>
             ))}
           </ol>
-          <button type="button" className="button primary" onClick={save} disabled={!canSave}>
-            Save recipe
-          </button>
+          <div className="actions">
+            <button type="button" className="button primary" onClick={save} disabled={!canSave}>
+              {editing ? "Save changes" : "Save recipe"}
+            </button>
+            {editing && (
+              <Link className="button" href={recipeHref(editing)}>
+                Cancel
+              </Link>
+            )}
+          </div>
         </section>
       )}
     </div>

@@ -49,3 +49,26 @@ test("import a pasted recipe, then scale it, shop for it, and find it again afte
   await page.getByRole("link", { name: "Your recipes" }).click();
   await expect(page.getByRole("link", { name: "Garlic Butter Rice" })).toBeVisible();
 });
+
+test("fix a misread ingredient by editing an imported recipe", async ({ page }) => {
+  await page.goto("/import/");
+  await page.getByRole("button", { name: "Try an example" }).click();
+  await page.getByRole("button", { name: "Save recipe" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Easy Banana Bread");
+  const recipeUrl = page.url();
+  await expect(page.locator(".ingredients li", { hasText: "salt" })).toContainText("Pinch of salt, to taste");
+
+  await page.getByRole("link", { name: "Edit" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Edit Easy Banana Bread");
+  expect((await axe(page)).violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+
+  const box = page.getByLabel("Recipe text");
+  await box.fill((await box.inputValue()).replace("- Pinch of salt", "- 1/4 tsp salt"));
+  await page.getByRole("button", { name: "Save changes" }).click();
+
+  await expect(page).toHaveURL(recipeUrl);
+  await expect(page.locator(".ingredients li", { hasText: "salt" })).toContainText("¼ tsp salt");
+  await page.getByRole("button", { name: "More servings" }).click();
+  await expect(page.locator(".ingredients li", { hasText: "salt" })).toContainText("tsp salt");
+  await expect(page.locator(".ingredients li", { hasText: "salt" })).not.toContainText("¼");
+});
