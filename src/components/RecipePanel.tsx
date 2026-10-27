@@ -12,12 +12,14 @@ import { useCookButtonVariant } from "@/lib/useCookButtonVariant";
 import { useStore } from "@/lib/useStore";
 import { CookMode } from "./CookMode";
 import { IngredientList } from "./IngredientList";
+import { ScaleByIngredient } from "./ScaleByIngredient";
 import { ServingsStepper } from "./ServingsStepper";
 import { UnitToggle } from "./UnitToggle";
 
 /** The interactive part of a recipe page: servings, units, ingredients, shopping list, cook mode. */
 export function RecipePanel({ recipe }: { recipe: Recipe }) {
   const [servings, setServings] = useState(recipe.servings);
+  const [scaledTo, setScaledTo] = useState<string | null>(null);
   const system = useStore(unitSystemStore);
   const list = useStore(shoppingListStore);
   const inList = list.some((e) => e.slug === recipe.slug && e.servings === servings);
@@ -39,9 +41,34 @@ export function RecipePanel({ recipe }: { recipe: Recipe }) {
         value={servings}
         onChange={(n) => {
           setServings(n);
+          setScaledTo(null);
           track("change_servings", { recipe: recipe.slug, servings: n });
         }}
       />
+      <ScaleByIngredient
+        recipe={recipe}
+        system={system}
+        onScale={(n, description, ingredient) => {
+          setServings(n);
+          setScaledTo(description);
+          track("scale_by_ingredient", { recipe: recipe.slug, ingredient });
+        }}
+      />
+      {scaledTo && (
+        <p className="scaled-note">
+          Scaled to your {scaledTo}.{" "}
+          <button
+            type="button"
+            className="link-button"
+            onClick={() => {
+              setServings(recipe.servings);
+              setScaledTo(null);
+            }}
+          >
+            Back to {recipe.servings} servings
+          </button>
+        </p>
+      )}
       <IngredientList recipe={recipe} factor={scaleFactor(recipe.servings, servings)} system={system} />
       <div className="actions">
         <CookMode

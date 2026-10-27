@@ -22,6 +22,7 @@ Built with **Next.js, React, and TypeScript**, tested with **Vitest and React Te
 | Feature | How it works |
 |---|---|
 | **Serving-size scaling** | Every amount updates as you change servings and stays readable: 1.5 cups shows as "1½ cups", and 3 tsp rolls up into "1 tbsp". |
+| **Scale to what you have** | Only have 300 g of lentils or 3 eggs? Pick the ingredient, enter what you have (in any matching unit, or by weight for flour, sugar, and lentils measured in cups), and the whole recipe rescales around it, showing about how many servings it makes. |
 | **US and metric** | One tap converts the whole recipe. Flour, sugar, and butter switch to grams (using each ingredient's density), not just millilitres. Your choice is remembered. |
 | **Cook mode** | One large step at a time with big Back and Next buttons (or arrow keys), built-in timers on timed steps, and the [Screen Wake Lock API](https://developer.mozilla.org/docs/Web/API/Screen_Wake_Lock_API) so the phone does not go dark mid-recipe. |
 | **Hands-free voice control** | Messy hands? Turn on Hands-free in cook mode and say "next", "back", "repeat" (reads the step aloud), "start timer", "pause timer", or "exit". Uses the browser's built-in [Web Speech API](https://developer.mozilla.org/docs/Web/API/Web_Speech_API), so there is no API key, no cost, and no voice data stored by the site. Ignores its own voice while reading a step, keeps listening through pauses, and explains clearly if the microphone is blocked. Hidden in browsers without speech recognition. |

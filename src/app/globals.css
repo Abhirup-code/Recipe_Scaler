@@ -95,6 +95,20 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .save-button[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); font-weight: 700; }
 .segmented button[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
 
+.scale-by { margin: 0.75rem 0; }
+.scale-by summary { cursor: pointer; color: var(--accent); font-weight: 600; min-height: 44px; display: flex; align-items: center; }
+.scale-by form { display: grid; gap: 0.75rem; padding-top: 0.25rem; }
+.scale-by form p { margin: 0; }
+.scale-by-fields { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0.5rem; }
+.scale-by-fields .field { display: grid; gap: 0.25rem; font-size: 0.9rem; color: var(--muted); }
+.scale-by input, .scale-by select {
+  min-height: 44px; padding: 0 0.6rem; border: 1px solid var(--border); border-radius: 10px;
+  background: var(--bg); color: var(--text); font: inherit; width: 100%;
+}
+.scale-by .button { justify-self: start; }
+.field-error { color: var(--accent); font-weight: 600; }
+.scaled-note { margin: 0.25rem 0 0.75rem; padding: 0.5rem 0.75rem; border-left: 4px solid var(--accent); background: var(--bg); }
+@media (max-width: 520px) { .scale-by-fields { grid-template-columns: 1fr 1fr; } .scale-by-fields .field:first-child { grid-column: 1 / -1; } }
 .stepper { display: inline-flex; align-items: center; gap: 0.75rem; }
 .stepper button { width: 44px; padding: 0; font-size: 1.3rem; }
 .stepper output { font-weight: 700; min-width: 7.5ch; text-align: center; }

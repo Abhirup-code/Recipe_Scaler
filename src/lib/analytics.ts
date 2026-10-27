@@ -14,7 +14,8 @@ export type AnalyticsEvent =
   | "print_recipe"
   | "experiment_exposure"
   | "enable_voice"
-  | "voice_command";
+  | "voice_command"
+  | "scale_by_ingredient";
 
 type Params = Record<string, string | number>;
 type Gtag = (command: "event" | "config" | "js", target: string | Date, params?: Params) => void;
