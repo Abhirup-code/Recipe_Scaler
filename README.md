@@ -1,6 +1,9 @@
 # Recipe Scaler
 
 [![CI](https://github.com/Abhirup-code/Recipe_Scaler/actions/workflows/ci.yml/badge.svg)](https://github.com/Abhirup-code/Recipe_Scaler/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/Abhirup-code/Recipe_Scaler/actions/workflows/codeql.yml/badge.svg)](https://github.com/Abhirup-code/Recipe_Scaler/actions/workflows/codeql.yml)
+[![Security](https://github.com/Abhirup-code/Recipe_Scaler/actions/workflows/security.yml/badge.svg)](https://github.com/Abhirup-code/Recipe_Scaler/actions/workflows/security.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Abhirup-code/Recipe_Scaler/badge)](https://scorecard.dev/viewer/?uri=github.com/Abhirup-code/Recipe_Scaler)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
 **Live demo: https://abhirup-code.github.io/Recipe_Scaler/**
@@ -50,6 +53,19 @@ Built with **Next.js, React, and TypeScript**, tested with **Vitest and React Te
 | Accessibility | axe-core scans of every page, of cook mode, voice mode, the scaling form, a filled pantry, the import preview, and an imported recipe in light and dark themes find no WCAG 2.1 AA violations; any new violation fails CI |
 
 CI fails a pull request if Lighthouse drops below 90 for performance or 95 for accessibility, best practices, or SEO, or if layout shift goes above 0.1.
+
+## Security
+
+| Check | What it does |
+|---|---|
+| CodeQL | Static analysis of the TypeScript and React code and of the GitHub Actions workflows, with the extended security query set, on every push, pull request, and weekly |
+| gitleaks | Scans the full git history for leaked secrets (pinned, checksum-verified binary) |
+| npm audit | Fails on any known vulnerability of moderate severity or worse, and verifies installed packages against their registry signatures |
+| OpenSSF Scorecard | Rates the repository's supply-chain practices and publishes the badge above |
+| Dependabot | Weekly, grouped updates for npm packages and GitHub Actions |
+| Pinned actions | Every GitHub Action is pinned to a full commit hash; workflows are read-only by default |
+
+There is no server or account system: everything you save stays in your browser. Pasted recipes, shared links, and data read back from storage are validated before use. See [SECURITY.md](SECURITY.md) to report a vulnerability.
 
 ## Design decisions
 
