@@ -1,15 +1,30 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
 
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
+/** Lets cook mode start and pause the timer by voice. */
+export interface StepTimerHandle {
+  start(): void;
+  pause(): void;
+}
+
 /** Countdown for a cooking step. Announces "Time's up" to screen readers and vibrates if it can. */
-export function StepTimer({ minutes }: { minutes: number }) {
+export function StepTimer({ minutes, ref }: { minutes: number; ref?: Ref<StepTimerHandle> }) {
   const total = Math.round(minutes * 60);
   const [left, setLeft] = useState(total);
   const [running, setRunning] = useState(false);
   const interval = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      start: () => setRunning(left > 0),
+      pause: () => setRunning(false),
+    }),
+    [left],
+  );
 
   useEffect(() => {
     if (!running) return;

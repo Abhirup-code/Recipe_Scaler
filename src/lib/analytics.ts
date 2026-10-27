@@ -12,7 +12,9 @@ export type AnalyticsEvent =
   | "view_substitutes"
   | "save_recipe"
   | "print_recipe"
-  | "experiment_exposure";
+  | "experiment_exposure"
+  | "enable_voice"
+  | "voice_command";
 
 type Params = Record<string, string | number>;
 type Gtag = (command: "event" | "config" | "js", target: string | Date, params?: Params) => void;
