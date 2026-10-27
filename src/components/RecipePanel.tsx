@@ -94,8 +94,6 @@ export function RecipePanel({ recipe, shareable = true }: { recipe: Recipe; shar
           onStart={() => track("start_cook_mode", { recipe: recipe.slug, variant })}
           onFinish={() => track("finish_cook_mode", { recipe: recipe.slug, variant })}
         />
-        {/* Imported recipes live on this device only, so a link would not open anywhere else. */}
-        {shareable && <ShareRecipe name={recipe.name} servings={servings} system={system} />}
         {inList ? (
           <Link className="button" href="/shopping-list/">
             In your list ✓ View list
@@ -113,6 +111,9 @@ export function RecipePanel({ recipe, shareable = true }: { recipe: Recipe; shar
           </button>
         )}
       </div>
+      {/* Its own row, so opening the QR code never stretches the buttons above.
+          Imported recipes live on this device only, so a link would not open anywhere else. */}
+      {shareable && <ShareRecipe name={recipe.name} servings={servings} system={system} />}
     </section>
   );
 }

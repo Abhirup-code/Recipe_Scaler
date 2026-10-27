@@ -17,3 +17,15 @@ test("a shared link opens at its servings and units, and shows a QR code", async
   await page.goto("/recipes/simple-shakshuka/");
   await expect(page.getByRole("button", { name: "US" })).toHaveAttribute("aria-pressed", "true");
 });
+
+test("opening the QR code does not stretch the buttons above it, on a phone or a desktop", async ({ page }) => {
+  for (const viewport of [null, { width: 1280, height: 800 }]) {
+    if (viewport) await page.setViewportSize(viewport);
+    await page.goto("/recipes/buttermilk-pancakes/");
+    const cook = page.getByRole("button", { name: "Start cook mode" });
+    const before = (await cook.boundingBox())!.height;
+    await page.getByRole("button", { name: "QR code" }).click();
+    await expect(page.getByRole("img", { name: /QR code/ })).toBeVisible();
+    expect((await cook.boundingBox())!.height).toBe(before);
+  }
+});

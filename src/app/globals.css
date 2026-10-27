@@ -125,7 +125,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .match .button { flex-shrink: 0; white-space: nowrap; }
 .already-have { margin-top: 1rem; }
 .already-have summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--muted); }
-.share { display: grid; gap: 0.25rem; }
+.share { display: grid; gap: 0.25rem; margin-top: 0.75rem; }
 .share-status:empty { display: none; }
 .share-status { margin: 0; }
 .share-link { min-height: 44px; padding: 0 0.6rem; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); font: inherit; width: 100%; }
@@ -154,7 +154,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 .subs { flex-basis: 100%; background: var(--bg); border-radius: 10px; padding: 0.5rem 1rem; }
 .subs ul { margin: 0; padding-left: 1.2rem; }
-.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
 
 .steps { padding-left: 1.4rem; }
 .steps li { margin-bottom: 0.9rem; padding-left: 0.25rem; }
