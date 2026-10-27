@@ -11,6 +11,10 @@ interface VoiceState {
 }
 
 const BLOCKED = "Microphone access is blocked. Allow it in your browser settings to use voice.";
+const NO_MIC = "No microphone found. Connect one, or use the buttons.";
+const SILENT =
+  "I can't hear anything. Check your microphone is not muted and that your browser may use it (on a Mac: System Settings, Privacy & Security, Microphone).";
+const OFFLINE = "Voice needs an internet connection in this browser. The buttons still work.";
 
 /**
  * Listens for cook-mode commands while `enabled` is true. Recognition keeps restarting
@@ -32,16 +36,20 @@ export function useVoiceControl(enabled: boolean, onCommand: (command: VoiceComm
     const recognition = new Recognition();
     recognition.lang = "en-US";
     recognition.continuous = true;
-    recognition.interimResults = false;
+    recognition.interimResults = true; // show words as they are heard, act on the final result
     let active = true;
 
-    recognition.onstart = () => setState((s) => ({ ...s, listening: true, error: null }));
+    let silentRounds = 0;
+
+    recognition.onstart = () => setState((s) => ({ ...s, listening: true }));
     recognition.onresult = (event) => {
       if (isSpeaking()) return;
       const latest = event.results[event.results.length - 1];
       const transcript = latest?.[0]?.transcript.trim() ?? "";
       if (!transcript) return;
-      setState((s) => ({ ...s, heard: transcript }));
+      silentRounds = 0;
+      setState((s) => ({ ...s, heard: transcript, error: null }));
+      if (latest?.isFinal === false) return;
       const command = parseCommand(transcript);
       if (command) handler.current(command);
     };
@@ -49,6 +57,16 @@ export function useVoiceControl(enabled: boolean, onCommand: (command: VoiceComm
       if (event.error === "not-allowed" || event.error === "service-not-allowed") {
         active = false;
         setState((s) => ({ ...s, listening: false, error: BLOCKED }));
+      } else if (event.error === "audio-capture") {
+        active = false;
+        setState((s) => ({ ...s, listening: false, error: NO_MIC }));
+      } else if (event.error === "network") {
+        active = false;
+        setState((s) => ({ ...s, listening: false, error: OFFLINE }));
+      } else if (event.error === "no-speech") {
+        silentRounds += 1;
+        // Browsers report silence after a few seconds; only warn once it keeps happening.
+        if (silentRounds >= 2) setState((s) => ({ ...s, error: SILENT }));
       }
     };
     recognition.onend = () => {

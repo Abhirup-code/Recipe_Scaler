@@ -32,12 +32,15 @@ test.beforeEach(async ({ page }) => {
       webkitSpeechRecognition: FakeRecognition,
       __spoken: spoken,
       __say: (transcript: string) =>
-        instances.filter((r) => r.running).forEach((r) => r.onresult?.({ results: [[{ transcript }]] })),
+        instances
+          .filter((r) => r.running)
+          .forEach((r) => r.onresult?.({ results: [Object.assign([{ transcript }], { isFinal: true })] })),
     });
     const synth = window.speechSynthesis;
     if (synth) {
       synth.speak = (u: SpeechSynthesisUtterance) => {
         spoken.push(u.text);
+        setTimeout(() => u.onend?.(new Event("end") as SpeechSynthesisEvent), 0);
       };
     }
   });

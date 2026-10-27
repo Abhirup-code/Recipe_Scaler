@@ -26,25 +26,36 @@ class FakeRecognition implements SpeechRecognitionLike {
   abort() {
     this.aborted = true;
   }
-  say(transcript: string) {
-    act(() => this.onresult?.({ results: [[{ transcript }]] }));
+  say(transcript: string, isFinal = true) {
+    act(() => this.onresult?.({ results: [Object.assign([{ transcript }], { isFinal })] }));
   }
 }
 
 const latest = () => FakeRecognition.instances[FakeRecognition.instances.length - 1]!;
 const spoken: string[] = [];
+type FakeUtterance = { text: string; onend: (() => void) | null };
+let holdSpeech = false;
+let pending: FakeUtterance | null = null;
 
 beforeEach(() => {
   FakeRecognition.instances = [];
   spoken.length = 0;
+  holdSpeech = false;
+  pending = null;
   Object.assign(window, { webkitSpeechRecognition: FakeRecognition });
   Object.assign(window, {
     speechSynthesis: {
       speaking: false,
       cancel: vi.fn(),
-      speak: (u: { text: string }) => spoken.push(u.text),
+      speak: (u: FakeUtterance) => {
+        spoken.push(u.text);
+        if (holdSpeech) pending = u;
+        else u.onend?.();
+      },
     },
     SpeechSynthesisUtterance: class {
+      onend: (() => void) | null = null;
+      onerror: (() => void) | null = null;
       constructor(public text: string) {}
     },
   });
@@ -104,11 +115,69 @@ describe("CookMode hands-free voice", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Heard: “these onions smell amazing”");
   });
 
-  it("ignores what it hears while it is reading a step aloud", async () => {
+  it("ignores what it hears while it is reading a step aloud, then listens again", async () => {
+    holdSpeech = true;
+    await openWithVoice();
+    latest().say("next");
+    expect(screen.getByRole("dialog")).toHaveTextContent("Step 1 of 3");
+    act(() => pending?.onend?.());
+    latest().say("next");
+    expect(screen.getByRole("dialog")).toHaveTextContent("Step 2 of 3");
+  });
+
+  it("is not fooled by a speaking flag the browser leaves stuck on", async () => {
     await openWithVoice();
     Object.assign(window.speechSynthesis, { speaking: true });
     latest().say("next");
+    expect(screen.getByRole("dialog")).toHaveTextContent("Step 2 of 3");
+  });
+
+  it("stops ignoring the mic even if the browser never says it finished speaking", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      holdSpeech = true;
+      await openWithVoice();
+      await act(async () => {
+        vi.advanceTimersByTime(5_000);
+      });
+      latest().say("next");
+      expect(screen.getByRole("dialog")).toHaveTextContent("Step 2 of 3");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("shows words as they are heard but acts only on the final result", async () => {
+    await openWithVoice();
+    latest().say("nex", false);
+    expect(screen.getByRole("status")).toHaveTextContent("Heard: “nex”");
+    latest().say("next", false);
     expect(screen.getByRole("dialog")).toHaveTextContent("Step 1 of 3");
+    latest().say("next");
+    expect(screen.getByRole("dialog")).toHaveTextContent("Step 2 of 3");
+  });
+
+  it("explains when it keeps hearing silence, and clears once it hears you", async () => {
+    await openWithVoice();
+    const recognition = latest();
+    act(() => recognition.onerror?.({ error: "no-speech" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Listening.");
+    act(() => recognition.onerror?.({ error: "no-speech" }));
+    expect(screen.getByRole("status")).toHaveTextContent("I can't hear anything");
+    recognition.say("next");
+    expect(screen.getByRole("status")).toHaveTextContent("Listening.");
+  });
+
+  it.each([
+    ["audio-capture", "No microphone found"],
+    ["network", "needs an internet connection"],
+  ])("explains a %s error and stops retrying", async (error, message) => {
+    await openWithVoice();
+    const recognition = latest();
+    act(() => recognition.onerror?.({ error }));
+    act(() => recognition.onend?.());
+    expect(screen.getByRole("status")).toHaveTextContent(message);
+    expect(recognition.started).toBe(1);
   });
 
   it("starts and pauses the step timer by voice", async () => {
