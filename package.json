@@ -1,6 +1,6 @@
 {
   "name": "recipe-scaler",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Mobile-first recipe site with serving-size scaling, unit conversion, cook mode, and shopping lists. Next.js, React, TypeScript.",
   "license": "Apache-2.0",
