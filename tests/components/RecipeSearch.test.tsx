@@ -17,7 +17,9 @@ describe("RecipeSearch", () => {
     render(<RecipeSearch recipes={recipes} />);
     expect(screen.getAllByRole("article")).toHaveLength(recipes.length);
     await user.type(screen.getByRole("searchbox", { name: "Search recipes" }), "eggs");
-    expect(screen.getAllByRole("article")).toHaveLength(2);
+    const withEggs = recipes.filter((r) => r.ingredients.some((i) => i.name.includes("eggs")));
+    expect(withEggs.length).toBeGreaterThan(1);
+    expect(screen.getAllByRole("article")).toHaveLength(withEggs.length);
     await user.clear(screen.getByRole("searchbox"));
     await user.type(screen.getByRole("searchbox"), "durian");
     expect(screen.getByText(/No recipes match/)).toBeInTheDocument();

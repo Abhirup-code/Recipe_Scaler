@@ -34,6 +34,7 @@ Built with **Next.js, React, and TypeScript**, tested with **Vitest and React Te
 | **What can I cook?** | A Pantry page where you tick what is in your kitchen (sizes ignored, so "small onion" and "large onion" are both just onion; salt, pepper, and water assumed). Recipes you can make right now come first, then the ones you are closest to, with exactly what is missing. Your pantry is remembered, and the shopping list moves things you already have into a separate "Already in your kitchen" section that is left out when you copy the list. |
 | **"Out of it?" substitutions** | Suggested swaps for common ingredients (buttermilk, eggs, butter, soy sauce, ...), with notes on what changes in the dish. |
 | **Shopping list** | Add recipes at any serving size. Matching ingredients are combined even when recipes use different units (2 tbsp + 1 cup of milk), and you can check items off or copy the list. |
+| **12 recipes** | Indian, Mexican, Greek, Chinese, Italian, North African, and American dishes across breakfast, mains, salads, snacks, and dessert, each with its own illustration. A data test checks every recipe for both image sizes, valid units, sensible servings, and steps. |
 | **Search** | Filter by name, cuisine, tag, or ingredient ("lentils", "vegan quick"). |
 | **Saved recipes** | Tap ♡ Save on any recipe to keep it on a Saved page, newest first. |
 | **Works offline** | Installable on a phone's home screen. A service worker keeps every recipe you have opened available without internet, and shows a friendly page for ones you have not. |
@@ -48,8 +49,8 @@ Built with **Next.js, React, and TypeScript**, tested with **Vitest and React Te
 | Lighthouse (home page, mobile) | Performance 100, Accessibility 100, Best Practices 100, SEO 100 |
 | Lighthouse (recipe page, mobile) | Performance 99, Accessibility 100, Best Practices 100, SEO 100 |
 | Core Web Vitals (lab) | LCP 1.2 to 1.7 s, CLS 0 |
-| Unit and component tests | 258 tests (Vitest, React Testing Library), 99% line coverage, 90% coverage gate in CI |
-| End-to-end tests | 26 Playwright tests in a mobile browser: the full cooking flow, hands-free voice control, scaling to what you have, the pantry, importing a recipe, shared links, saved recipes, shopping list, print view, offline caching, and install manifest |
+| Unit and component tests | 282 tests (Vitest, React Testing Library), 99% line coverage, 90% coverage gate in CI |
+| End-to-end tests | 27 Playwright tests in a mobile browser: the full cooking flow, hands-free voice control, scaling to what you have, the pantry, importing a recipe, shared links, saved recipes, shopping list, print view, offline caching, and install manifest |
 | Accessibility | axe-core scans of every page, of cook mode, voice mode, the scaling form, a filled pantry, the import preview, and an imported recipe in light and dark themes find no WCAG 2.1 AA violations; any new violation fails CI |
 
 CI fails a pull request if Lighthouse drops below 90 for performance or 95 for accessibility, best practices, or SEO, or if layout shift goes above 0.1.
@@ -102,7 +103,7 @@ To turn on analytics, create a free Google Analytics 4 property and build with `
 
 ```
 src/
-  app/          pages: home, recipes, saved, shopping list, offline, sitemap, robots, manifest
+  app/          pages: home, recipes, pantry, import, your recipes, saved, shopping list, offline, sitemap, robots, manifest
   components/   interactive pieces: scaling panel, cook mode, timers, saving, shopping list
   data/         the recipes
   lib/          tested logic: units, formatting, scaling, shopping list, schema, storage,
