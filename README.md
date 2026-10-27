@@ -50,7 +50,7 @@ Built with **Next.js, React, and TypeScript**, tested with **Vitest and React Te
 | Lighthouse (home page, mobile) | Performance 100, Accessibility 100, Best Practices 100, SEO 100 |
 | Lighthouse (recipe page, mobile) | Performance 99, Accessibility 100, Best Practices 100, SEO 100 |
 | Core Web Vitals (lab) | LCP 1.2 to 1.7 s, CLS 0 |
-| Unit and component tests | 335 tests (Vitest, React Testing Library), 99% line coverage, 90% coverage gate in CI |
+| Unit and component tests | 347 tests (Vitest, React Testing Library), 99% line coverage, 90% coverage gate in CI |
 | End-to-end tests | 30 Playwright tests in a mobile browser: the full cooking flow, recently cooked, editing and backing up imported recipes, hands-free voice control, scaling to what you have, the pantry, importing a recipe, shared links, saved recipes, shopping list, print view, offline caching, and install manifest |
 | Accessibility | axe-core scans of every page, of cook mode, voice mode, the scaling form, a filled pantry, the import preview, and an imported recipe in light and dark themes find no WCAG 2.1 AA violations; any new violation fails CI |
 
@@ -63,6 +63,7 @@ CI fails a pull request if Lighthouse drops below 90 for performance or 95 for a
 | CodeQL | Static analysis of the TypeScript and React code and of the GitHub Actions workflows, with the extended security query set, on every push, pull request, and weekly |
 | gitleaks | Scans the full git history for leaked secrets (pinned, checksum-verified binary) |
 | npm audit | Fails on any known vulnerability of moderate severity or worse, and verifies installed packages against their registry signatures |
+| Fuzzing | Property-based tests with [fast-check](https://fast-check.dev) throw thousands of random inputs at the recipe parser, unit conversion, scaling, backups, stored data, and shared links, checking rules that must always hold (never crash, never accept a malformed recipe, never lose quantity in a conversion). A local run of 20,000 inputs per rule found no failures. |
 | OpenSSF Scorecard | Rates the repository's supply-chain practices and publishes the badge above |
 | Dependabot | Weekly, grouped updates for npm packages and GitHub Actions |
 | Pinned actions | Every GitHub Action is pinned to a full commit hash; workflows are read-only by default |
