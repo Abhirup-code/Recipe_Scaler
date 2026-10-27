@@ -7,6 +7,7 @@ import { humanDuration } from "@/lib/duration";
 import { myRecipesStore, recipeHref, removeMyRecipe, validMyRecipes } from "@/lib/myRecipes";
 import type { Recipe } from "@/lib/types";
 import { useStore } from "@/lib/useStore";
+import { BackupControls } from "./BackupControls";
 import { RecipePanel } from "./RecipePanel";
 
 function DeleteButton({ recipe, onDeleted }: { recipe: Recipe; onDeleted?: () => void }) {
@@ -107,6 +108,7 @@ export function MyRecipes() {
           ))}
         </ul>
       )}
+      <BackupControls recipes={mine} />
     </>
   );
 }

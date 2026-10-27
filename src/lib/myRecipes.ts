@@ -83,3 +83,60 @@ export function recipeHref(recipe: Pick<Recipe, "slug">): string {
 export function withMyRecipes(stored: unknown): Recipe[] {
   return [...builtIn, ...validMyRecipes(stored)];
 }
+
+// ---- Backup and restore (issue #6) ----
+
+export const BACKUP_APP = "recipe-scaler";
+export const BACKUP_VERSION = 1;
+export const MAX_BACKUP_BYTES = 2_000_000;
+
+export interface Backup {
+  app: typeof BACKUP_APP;
+  version: number;
+  exportedAt: string;
+  recipes: Recipe[];
+}
+
+/** Everything you imported, as a JSON file you can keep or move to another device. */
+export function backupJson(recipes: Recipe[], now: Date): string {
+  const backup: Backup = { app: BACKUP_APP, version: BACKUP_VERSION, exportedAt: now.toISOString(), recipes };
+  return JSON.stringify(backup, null, 2);
+}
+
+export type RestoreResult =
+  | { ok: true; recipes: Recipe[]; added: number; alreadyHere: number; invalid: number }
+  | { ok: false; error: string };
+
+/**
+ * Merge a backup into the recipes you already have. Recipes already on this device are kept
+ * as they are; anything malformed is skipped. Never trusts the file: every recipe is validated.
+ */
+export function restoreBackup(text: string, existing: Recipe[]): RestoreResult {
+  if (text.length > MAX_BACKUP_BYTES) return { ok: false, error: "That file is too large to be a Recipe Scaler backup." };
+  let data: unknown;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    return { ok: false, error: "That file is not a Recipe Scaler backup (it is not valid JSON)." };
+  }
+  const backup = data as Partial<Backup>;
+  if (typeof backup !== "object" || backup === null || backup.app !== BACKUP_APP || !Array.isArray(backup.recipes)) {
+    return { ok: false, error: "That file is not a Recipe Scaler backup." };
+  }
+  if (typeof backup.version !== "number" || backup.version > BACKUP_VERSION) {
+    return { ok: false, error: "That backup was made by a newer version of Recipe Scaler. Refresh the page and try again." };
+  }
+  const have = new Set(existing.map((r) => r.slug));
+  const added: Recipe[] = [];
+  let alreadyHere = 0;
+  let invalid = 0;
+  for (const item of backup.recipes) {
+    if (!isMyRecipe(item)) invalid += 1;
+    else if (have.has(item.slug)) alreadyHere += 1;
+    else {
+      have.add(item.slug);
+      added.push(item);
+    }
+  }
+  return { ok: true, recipes: [...existing, ...added], added: added.length, alreadyHere, invalid };
+}

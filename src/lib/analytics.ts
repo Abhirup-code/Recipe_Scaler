@@ -18,7 +18,9 @@ export type AnalyticsEvent =
   | "scale_by_ingredient"
   | "pantry_add_to_list"
   | "share_recipe"
-  | "import_recipe";
+  | "import_recipe"
+  | "backup_recipes"
+  | "restore_recipes";
 
 type Params = Record<string, string | number>;
 type Gtag = (command: "event" | "config" | "js", target: string | Date, params?: Params) => void;
