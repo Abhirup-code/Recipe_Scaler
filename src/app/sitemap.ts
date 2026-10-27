@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: `${SITE_URL}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE_URL}/pantry/`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${SITE_URL}/import/`, changeFrequency: "monthly", priority: 0.6 },
     ...recipes.map((r) => ({
       url: `${SITE_URL}/recipes/${r.slug}/`,
       lastModified: r.datePublished,

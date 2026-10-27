@@ -10,19 +10,31 @@ export function SavedRecipes() {
   const saved = useStore(savedStore);
   const items = saved.map((slug) => recipes.find((r) => r.slug === slug)).filter((r) => r !== undefined);
 
+  const mine = (
+    <p className="muted">
+      Looking for recipes you imported? They are on <Link href="/my-recipes/">your recipes</Link>.
+    </p>
+  );
+
   if (items.length === 0) {
     return (
+      <>
       <p className="empty">
         Nothing saved yet. Tap <strong>♡ Save</strong> on any <Link href="/">recipe</Link> to keep it here. Saved
         recipes also work offline once you have opened them.
       </p>
+      {mine}
+      </>
     );
   }
   return (
-    <div className="grid">
-      {items.map((r) => (
-        <RecipeCard key={r.slug} recipe={r} />
-      ))}
-    </div>
+    <>
+      <div className="grid">
+        {items.map((r) => (
+          <RecipeCard key={r.slug} recipe={r} />
+        ))}
+      </div>
+      {mine}
+    </>
   );
 }

@@ -16,6 +16,11 @@ export default function HomePage() {
             What can I cook with what I have?
           </Link>
         </p>
+        <p>
+          <Link href="/import/" className="button">
+            Import your own recipe
+          </Link>
+        </p>
       </section>
       <RecipeSearch recipes={recipes} />
     </>

@@ -17,7 +17,8 @@ export type AnalyticsEvent =
   | "voice_command"
   | "scale_by_ingredient"
   | "pantry_add_to_list"
-  | "share_recipe";
+  | "share_recipe"
+  | "import_recipe";
 
 type Params = Record<string, string | number>;
 type Gtag = (command: "event" | "config" | "js", target: string | Date, params?: Params) => void;

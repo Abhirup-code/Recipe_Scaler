@@ -133,6 +133,16 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .share-qr figcaption { font-size: 0.9rem; }
 .qr { border-radius: 8px; border: 1px solid var(--border); }
 @media print { .share { display: none !important; } }
+.import-text { width: 100%; min-height: 14rem; padding: 0.75rem; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); font: inherit; resize: vertical; }
+.import-fields { display: grid; grid-template-columns: 3fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem; }
+.import-fields .field { display: grid; gap: 0.25rem; font-size: 0.9rem; color: var(--muted); }
+.import-fields input { min-height: 44px; padding: 0 0.6rem; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); font: inherit; width: 100%; }
+.import-warnings { margin: 0 0 0.75rem; padding: 0.5rem 0.75rem 0.5rem 1.75rem; border-left: 4px solid var(--accent); background: var(--bg); }
+.import h3 { margin: 1rem 0 0.25rem; }
+.import .button.primary { margin-top: 1rem; }
+.button.danger { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.my-recipes { list-style: none; padding: 0; display: grid; gap: 0.75rem; }
+.my-recipes .button { flex-shrink: 0; white-space: nowrap; }
 .stepper { display: inline-flex; align-items: center; gap: 0.75rem; }
 .stepper button { width: 44px; padding: 0; font-size: 1.3rem; }
 .stepper output { font-weight: 700; min-width: 7.5ch; text-align: center; }

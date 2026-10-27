@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useDeferredValue, useState } from "react";
 import { track } from "@/lib/analytics";
+import { myRecipesStore, recipeHref, validMyRecipes } from "@/lib/myRecipes";
 import { pantryItems, rankRecipes } from "@/lib/pantry";
 import { upsertEntry } from "@/lib/shoppingList";
 import { pantryStore, shoppingListStore } from "@/lib/stores";
@@ -13,7 +14,8 @@ const list = (items: string[]) =>
   items.length <= 1 ? items.join("") : `${items.slice(0, -1).join(", ")} and ${items.at(-1)}`;
 
 /** Tick what you have at home; recipes you can make right now rise to the top. */
-export function PantryView({ recipes }: { recipes: Recipe[] }) {
+export function PantryView({ recipes: builtIn }: { recipes: Recipe[] }) {
+  const recipes = [...builtIn, ...validMyRecipes(useStore(myRecipesStore))];
   const pantry = useStore(pantryStore);
   const entries = useStore(shoppingListStore);
   const [filter, setFilter] = useState("");
@@ -85,7 +87,7 @@ export function PantryView({ recipes }: { recipes: Recipe[] }) {
               return (
                 <li key={recipe.slug} className={missing.length === 0 ? "match ready" : "match"}>
                   <div>
-                    <Link href={`/recipes/${recipe.slug}/`} className="match-name">
+                    <Link href={recipeHref(recipe)} className="match-name">
                       {recipe.name}
                     </Link>
                     <p className="match-status">

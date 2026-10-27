@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { recipes } from "@/data/recipes";
+import { myRecipesStore, recipeHref, withMyRecipes } from "@/lib/myRecipes";
 import { BASICS, pantryKey } from "@/lib/pantry";
 import { buildShoppingList, listToText, removeEntry, upsertEntry, type ShoppingItem } from "@/lib/shoppingList";
 import { checkedStore, pantryStore, shoppingListStore, unitSystemStore } from "@/lib/stores";
@@ -15,6 +15,7 @@ export function ShoppingListView() {
   const checked = useStore(checkedStore);
   const system = useStore(unitSystemStore);
   const pantry = useStore(pantryStore);
+  const recipes = withMyRecipes(useStore(myRecipesStore));
   const [copied, setCopied] = useState(false);
 
   if (entries.length === 0) {
@@ -76,7 +77,7 @@ export function ShoppingListView() {
             if (!recipe) return null;
             return (
               <li key={e.slug}>
-                <Link href={`/recipes/${e.slug}/`}>{recipe.name}</Link>
+                <Link href={recipeHref(recipe)}>{recipe.name}</Link>
                 <ServingsStepper
                   value={e.servings}
                   onChange={(n) => shoppingListStore.set(upsertEntry(entries, { slug: e.slug, servings: n }))}

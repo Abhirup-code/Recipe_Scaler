@@ -27,6 +27,7 @@ Built with **Next.js, React, and TypeScript**, tested with **Vitest and React Te
 | **US and metric** | One tap converts the whole recipe. Flour, sugar, and butter switch to grams (using each ingredient's density), not just millilitres. Your choice is remembered. |
 | **Cook mode** | One large step at a time with big Back and Next buttons (or arrow keys), built-in timers on timed steps, and the [Screen Wake Lock API](https://developer.mozilla.org/docs/Web/API/Screen_Wake_Lock_API) so the phone does not go dark mid-recipe. |
 | **Hands-free voice control** | Messy hands? Turn on Hands-free in cook mode and say "next", "back", "repeat" (reads the step aloud), "start timer", "pause timer", or "exit". Uses the browser's built-in [Web Speech API](https://developer.mozilla.org/docs/Web/API/Web_Speech_API), so there is no API key, no cost, and no voice data stored by the site. Ignores its own voice while reading a step, keeps listening through pauses, and explains clearly if the microphone is blocked. Hidden in browsers without speech recognition. |
+| **Import your own recipe** | Paste a recipe from anywhere and it is read into ingredients and steps: mixed fractions (1 1/2, 1½, ¾), ranges, 30+ unit spellings (T vs t, tbsp, grams, lbs), notes in commas or brackets, serving counts, and step timers from "bake 25-30 minutes". A preview shows exactly what was understood, with plain notes about any guesses, and lets you fix the title and servings. Imported recipes get scaling, unit conversion, cook mode, hands-free voice, the pantry, and the shopping list. They stay on your device, and anything read back from storage is validated before use. |
 | **What can I cook?** | A Pantry page where you tick what is in your kitchen (sizes ignored, so "small onion" and "large onion" are both just onion; salt, pepper, and water assumed). Recipes you can make right now come first, then the ones you are closest to, with exactly what is missing. Your pantry is remembered, and the shopping list moves things you already have into a separate "Already in your kitchen" section that is left out when you copy the list. |
 | **"Out of it?" substitutions** | Suggested swaps for common ingredients (buttermilk, eggs, butter, soy sauce, ...), with notes on what changes in the dish. |
 | **Shopping list** | Add recipes at any serving size. Matching ingredients are combined even when recipes use different units (2 tbsp + 1 cup of milk), and you can check items off or copy the list. |
@@ -44,9 +45,9 @@ Built with **Next.js, React, and TypeScript**, tested with **Vitest and React Te
 | Lighthouse (home page, mobile) | Performance 100, Accessibility 100, Best Practices 100, SEO 100 |
 | Lighthouse (recipe page, mobile) | Performance 99, Accessibility 100, Best Practices 100, SEO 100 |
 | Core Web Vitals (lab) | LCP 1.2 to 1.7 s, CLS 0 |
-| Unit and component tests | 166 tests (Vitest, React Testing Library), 99% line coverage, 90% coverage gate in CI |
-| End-to-end tests | 22 Playwright tests in a mobile browser: the full cooking flow, hands-free voice control, scaling to what you have, the pantry, saved recipes, shopping list, print view, offline caching, and install manifest |
-| Accessibility | axe-core scans of every page, of cook mode, voice mode, the scaling form, and a filled pantry in light and dark themes find no WCAG 2.1 AA violations; any new violation fails CI |
+| Unit and component tests | 258 tests (Vitest, React Testing Library), 99% line coverage, 90% coverage gate in CI |
+| End-to-end tests | 26 Playwright tests in a mobile browser: the full cooking flow, hands-free voice control, scaling to what you have, the pantry, importing a recipe, shared links, saved recipes, shopping list, print view, offline caching, and install manifest |
+| Accessibility | axe-core scans of every page, of cook mode, voice mode, the scaling form, a filled pantry, the import preview, and an imported recipe in light and dark themes find no WCAG 2.1 AA violations; any new violation fails CI |
 
 CI fails a pull request if Lighthouse drops below 90 for performance or 95 for accessibility, best practices, or SEO, or if layout shift goes above 0.1.
 

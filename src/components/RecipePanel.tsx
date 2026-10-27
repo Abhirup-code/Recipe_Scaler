@@ -19,7 +19,7 @@ import { ShareRecipe } from "./ShareRecipe";
 import { UnitToggle } from "./UnitToggle";
 
 /** The interactive part of a recipe page: servings, units, ingredients, shopping list, cook mode. */
-export function RecipePanel({ recipe }: { recipe: Recipe }) {
+export function RecipePanel({ recipe, shareable = true }: { recipe: Recipe; shareable?: boolean }) {
   const [servings, setServings] = useState(recipe.servings);
   const [scaledTo, setScaledTo] = useState<string | null>(null);
   const savedSystem = useStore(unitSystemStore);
@@ -94,7 +94,8 @@ export function RecipePanel({ recipe }: { recipe: Recipe }) {
           onStart={() => track("start_cook_mode", { recipe: recipe.slug, variant })}
           onFinish={() => track("finish_cook_mode", { recipe: recipe.slug, variant })}
         />
-        <ShareRecipe name={recipe.name} servings={servings} system={system} />
+        {/* Imported recipes live on this device only, so a link would not open anywhere else. */}
+        {shareable && <ShareRecipe name={recipe.name} servings={servings} system={system} />}
         {inList ? (
           <Link className="button" href="/shopping-list/">
             In your list ✓ View list
