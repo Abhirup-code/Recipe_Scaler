@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useState } from "react";
 import { recipes } from "@/data/recipes";
-import { buildShoppingList, listToText, removeEntry, upsertEntry } from "@/lib/shoppingList";
-import { checkedStore, shoppingListStore, unitSystemStore } from "@/lib/stores";
+import { BASICS, pantryKey } from "@/lib/pantry";
+import { buildShoppingList, listToText, removeEntry, upsertEntry, type ShoppingItem } from "@/lib/shoppingList";
+import { checkedStore, pantryStore, shoppingListStore, unitSystemStore } from "@/lib/stores";
 import { useStore } from "@/lib/useStore";
 import { ServingsStepper } from "./ServingsStepper";
 import { UnitToggle } from "./UnitToggle";
@@ -13,6 +14,7 @@ export function ShoppingListView() {
   const entries = useStore(shoppingListStore);
   const checked = useStore(checkedStore);
   const system = useStore(unitSystemStore);
+  const pantry = useStore(pantryStore);
   const [copied, setCopied] = useState(false);
 
   if (entries.length === 0) {
@@ -23,9 +25,34 @@ export function ShoppingListView() {
     );
   }
 
-  const items = buildShoppingList(entries, recipes, system);
+  const all = buildShoppingList(entries, recipes, system);
+  // Things you said you already have (on the Pantry page) move out of the way, along with
+  // the basics the Pantry page assumes. Without a pantry, everything stays on the list.
+  const inKitchen = new Set(pantry);
+  const have = (i: ShoppingItem) =>
+    pantry.length > 0 && (inKitchen.has(pantryKey(i.name)) || BASICS.has(pantryKey(i.name)));
+  const items = all.filter((i) => !have(i));
+  const alreadyHave = all.filter(have);
   const toggle = (key: string) =>
     checkedStore.set(checked.includes(key) ? checked.filter((k) => k !== key) : [...checked, key]);
+
+  const checklist = (list: ShoppingItem[]) => (
+    <ul className="checklist">
+      {list.map((item) => (
+        <li key={item.key}>
+          <label className={checked.includes(item.key) ? "done" : undefined}>
+            <input type="checkbox" checked={checked.includes(item.key)} onChange={() => toggle(item.key)} />
+            <span>
+              {item.amount && <strong>{item.amount} </strong>}
+              {item.unit && `${item.unit} `}
+              {item.name}
+              <span className="muted"> · {item.recipes.join(", ")}</span>
+            </span>
+          </label>
+        </li>
+      ))}
+    </ul>
+  );
 
   async function copy() {
     try {
@@ -87,21 +114,20 @@ export function ShoppingListView() {
             </button>
           </div>
         </div>
-        <ul className="checklist">
-          {items.map((item) => (
-            <li key={item.key}>
-              <label className={checked.includes(item.key) ? "done" : undefined}>
-                <input type="checkbox" checked={checked.includes(item.key)} onChange={() => toggle(item.key)} />
-                <span>
-                  {item.amount && <strong>{item.amount} </strong>}
-                  {item.unit && `${item.unit} `}
-                  {item.name}
-                  <span className="muted"> · {item.recipes.join(", ")}</span>
-                </span>
-              </label>
-            </li>
-          ))}
-        </ul>
+        {items.length === 0 ? (
+          <p className="muted">You already have everything on this list.</p>
+        ) : (
+          checklist(items)
+        )}
+        {alreadyHave.length > 0 && (
+          <details className="already-have">
+            <summary>Already in your kitchen ({alreadyHave.length})</summary>
+            {checklist(alreadyHave)}
+            <p className="muted">
+              From your <Link href="/pantry/">pantry</Link>. Untick an item there if you run out.
+            </p>
+          </details>
+        )}
       </section>
     </>
   );

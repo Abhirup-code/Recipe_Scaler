@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "./fixtures";
 
-for (const path of ["/", "/recipes/kolkata-masoor-dal/", "/shopping-list/", "/saved/", "/offline/"]) {
+for (const path of ["/", "/recipes/kolkata-masoor-dal/", "/pantry/", "/shopping-list/", "/saved/", "/offline/"]) {
   test(`no accessibility violations on ${path}`, async ({ page }) => {
     await page.goto(path);
     const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();

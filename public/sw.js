@@ -5,7 +5,7 @@
 const CACHE = "recipe-scaler-v1";
 const SCOPE = new URL(self.registration.scope).pathname; // "/" or "/Recipe_Scaler/"
 const OFFLINE_PAGE = `${SCOPE}offline/`;
-const PRECACHE = [SCOPE, OFFLINE_PAGE, `${SCOPE}saved/`, `${SCOPE}shopping-list/`];
+const PRECACHE = [SCOPE, OFFLINE_PAGE, `${SCOPE}saved/`, `${SCOPE}shopping-list/`, `${SCOPE}pantry/`];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

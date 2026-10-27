@@ -36,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </Link>
           <nav aria-label="Main">
             <Link href="/">Recipes</Link>
+            <Link href="/pantry/">Pantry</Link>
             <Link href="/saved/">Saved</Link>
             <Link href="/shopping-list/">Shopping list</Link>
           </nav>
