@@ -2,8 +2,9 @@
 
 import { formatFraction } from "@/lib/format";
 
-export const MIN_SERVINGS = 1;
-export const MAX_SERVINGS = 48;
+import { MAX_SERVINGS, MIN_SERVINGS } from "@/lib/limits";
+
+export { MAX_SERVINGS, MIN_SERVINGS };
 
 export function ServingsStepper({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   const set = (n: number) => onChange(Math.min(MAX_SERVINGS, Math.max(MIN_SERVINGS, n)));

@@ -1,29 +1,44 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { track } from "@/lib/analytics";
 import { COOK_BUTTON_EXPERIMENT } from "@/lib/experiment";
 import { scaleFactor } from "@/lib/ingredients";
+import { readSharedView } from "@/lib/share";
 import { upsertEntry } from "@/lib/shoppingList";
 import { shoppingListStore, unitSystemStore } from "@/lib/stores";
-import type { Recipe } from "@/lib/types";
+import type { Recipe, UnitSystem } from "@/lib/types";
 import { useCookButtonVariant } from "@/lib/useCookButtonVariant";
 import { useStore } from "@/lib/useStore";
 import { CookMode } from "./CookMode";
 import { IngredientList } from "./IngredientList";
 import { ScaleByIngredient } from "./ScaleByIngredient";
 import { ServingsStepper } from "./ServingsStepper";
+import { ShareRecipe } from "./ShareRecipe";
 import { UnitToggle } from "./UnitToggle";
 
 /** The interactive part of a recipe page: servings, units, ingredients, shopping list, cook mode. */
 export function RecipePanel({ recipe }: { recipe: Recipe }) {
   const [servings, setServings] = useState(recipe.servings);
   const [scaledTo, setScaledTo] = useState<string | null>(null);
-  const system = useStore(unitSystemStore);
+  const savedSystem = useStore(unitSystemStore);
+  // Units from a shared link apply to this page only, so they never overwrite your own choice.
+  const [linkSystem, setLinkSystem] = useState<UnitSystem | null>(null);
+  const system = linkSystem ?? savedSystem;
   const list = useStore(shoppingListStore);
   const inList = list.some((e) => e.slug === recipe.slug && e.servings === servings);
   const variant = useCookButtonVariant();
+
+  // Open a shared link at the servings and units it was shared with. Pages are pre-rendered,
+  // so the link can only be read in the browser, after the first render.
+  useEffect(() => {
+    const shared = readSharedView(window.location.search);
+    /* eslint-disable react-hooks/set-state-in-effect -- applying URL state once on load */
+    if (shared.servings !== undefined) setServings(shared.servings);
+    if (shared.units) setLinkSystem(shared.units);
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, []);
 
   return (
     <section aria-labelledby="ingredients-heading" className="panel">
@@ -32,6 +47,7 @@ export function RecipePanel({ recipe }: { recipe: Recipe }) {
         <UnitToggle
           value={system}
           onChange={(v) => {
+            setLinkSystem(null);
             unitSystemStore.set(v);
             track("change_units", { units: v });
           }}
@@ -78,6 +94,7 @@ export function RecipePanel({ recipe }: { recipe: Recipe }) {
           onStart={() => track("start_cook_mode", { recipe: recipe.slug, variant })}
           onFinish={() => track("finish_cook_mode", { recipe: recipe.slug, variant })}
         />
+        <ShareRecipe name={recipe.name} servings={servings} system={system} />
         {inList ? (
           <Link className="button" href="/shopping-list/">
             In your list ✓ View list
