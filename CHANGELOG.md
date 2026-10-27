@@ -4,6 +4,23 @@ All notable changes to Recipe Scaler are listed here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] - 2026-10-27
+
+### Added
+- Scale to what you have: pick an ingredient, enter how much you have (in any matching unit, or by weight for ingredients measured in cups), and the whole recipe rescales around it, showing about how many servings it makes.
+- What can I cook? A new Pantry page where you tick what is in your kitchen. Recipes you can make right now come first, then the closest ones, each showing exactly what is missing with a one-tap add to the shopping list.
+- The shopping list moves things already in your pantry into an "Already in your kitchen" section, left out when you copy the list.
+- Pantry link in the header and on the home page; the pantry page is in the sitemap and works offline.
+
+### Changed
+- The servings stepper shows fractional servings (about 6¼) after scaling to an ingredient, and steps to whole numbers.
+
+### Fixed
+- Form fields on the scaling form have clean labels for screen readers, and every button's spoken name includes its visible text.
+
+### Quality
+- 166 unit and component tests and 22 end-to-end tests, with accessibility scans of the scaling form and a filled pantry in light and dark themes.
+
 ## [1.1.0] - 2026-10-27
 
 ### Added
@@ -38,5 +55,6 @@ All notable changes to Recipe Scaler are listed here. The format follows
 - axe-core accessibility checks on every page; Lighthouse CI budgets on every pull request.
 - Automatic deploys to GitHub Pages from `main`.
 
+[1.2.0]: https://github.com/Abhirup-code/Recipe_Scaler/releases/tag/v1.2.0
 [1.1.0]: https://github.com/Abhirup-code/Recipe_Scaler/releases/tag/v1.1.0
 [1.0.0]: https://github.com/Abhirup-code/Recipe_Scaler/releases/tag/v1.0.0
