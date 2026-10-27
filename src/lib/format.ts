@@ -1,4 +1,5 @@
 import type { Unit, UnitSystem } from "./types";
+import { isCountUnit } from "./units";
 
 const FRACTIONS: ReadonlyArray<readonly [number, string]> = [
   [1 / 8, "⅛"],
@@ -56,13 +57,26 @@ const LABELS: Record<Unit, [string, string]> = {
   stalk: ["stalk", "stalks"],
 };
 
+/**
+ * Whole things (eggs, onions, cloves, cans) are counted, not measured: nobody uses ⅝ of an onion.
+ * Under 2, round to the nearest half (1½ onions); from 2 up, to whole numbers (3 chilies, not 3⅛).
+ * Never rounds a real amount down to nothing.
+ */
+export function roundCount(value: number): number {
+  if (value <= 0) return 0;
+  if (value >= 2) return Math.round(value);
+  return Math.max(0.5, Math.round(value * 2) / 2);
+}
+
 export function unitLabel(unit: Unit, qty: number): string {
   const [one, many] = LABELS[unit];
-  return qty > 1.0001 ? many : one;
+  const shown = isCountUnit(unit) ? roundCount(qty) : qty;
+  return shown > 1.0001 ? many : one;
 }
 
 /** Fractions read naturally for US cups and spoons and for counted items; decimals for metric. */
 export function formatAmount(qty: number, unit: Unit, system: UnitSystem): string {
+  if (isCountUnit(unit)) return formatFraction(roundCount(qty));
   const metricUnit = unit === "ml" || unit === "l" || unit === "g" || unit === "kg";
   return system === "metric" && metricUnit ? formatDecimal(qty) : formatFraction(qty);
 }

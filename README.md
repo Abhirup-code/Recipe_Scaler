@@ -21,7 +21,7 @@ Built with **Next.js, React, and TypeScript**, tested with **Vitest and React Te
 
 | Feature | How it works |
 |---|---|
-| **Serving-size scaling** | Every amount updates as you change servings and stays readable: 1.5 cups shows as "1½ cups", and 3 tsp rolls up into "1 tbsp". |
+| **Serving-size scaling** | Every amount updates as you change servings and stays readable: 1.5 cups shows as "1½ cups", and 3 tsp rolls up into "1 tbsp". Whole items are counted like a cook would: halves under 2, whole numbers above, so you get "1½ onions" and "3 chilies", never "1⅝ onions". |
 | **Scale to what you have** | Only have 300 g of lentils or 3 eggs? Pick the ingredient, enter what you have (in any matching unit, or by weight for flour, sugar, and lentils measured in cups), and the whole recipe rescales around it, showing about how many servings it makes. |
 | **US and metric** | One tap converts the whole recipe. Flour, sugar, and butter switch to grams (using each ingredient's density), not just millilitres. Your choice is remembered. |
 | **Cook mode** | One large step at a time with big Back and Next buttons (or arrow keys), built-in timers on timed steps, and the [Screen Wake Lock API](https://developer.mozilla.org/docs/Web/API/Screen_Wake_Lock_API) so the phone does not go dark mid-recipe. |

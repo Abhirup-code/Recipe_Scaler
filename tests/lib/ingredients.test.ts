@@ -32,3 +32,14 @@ describe("scaling ingredients", () => {
     expect(ingredientLine(displayIngredient({ name: "salt" }, 2, "us"))).toBe("salt (to taste)");
   });
 });
+
+describe("scaled whole ingredients", () => {
+  it("shows onions, chilies, and garlic in amounts you can actually use", () => {
+    const factor = 300 / 190; // 300 g of lentils in a recipe that uses 1 cup (190 g)
+    expect(ingredientLine(displayIngredient({ qty: 1, name: "small onion" }, factor, "us"))).toBe("1½ small onion");
+    expect(ingredientLine(displayIngredient({ qty: 2, name: "dried red chilies" }, factor, "us"))).toBe("3 dried red chilies");
+    expect(ingredientLine(displayIngredient({ qty: 4, unit: "clove", name: "garlic" }, factor, "metric"))).toBe(
+      "6 cloves garlic",
+    );
+  });
+});

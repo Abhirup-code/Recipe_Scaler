@@ -1,4 +1,4 @@
-import { formatAmount, formatDecimal, formatFraction, unitLabel } from "@/lib/format";
+import { formatAmount, formatDecimal, formatFraction, roundCount, unitLabel } from "@/lib/format";
 
 describe("formatFraction", () => {
   it.each([
@@ -44,5 +44,46 @@ describe("unit labels and amounts", () => {
     expect(formatAmount(1.5, "cup", "us")).toBe("1½");
     expect(formatAmount(354.9, "ml", "metric")).toBe("355");
     expect(formatAmount(2, "piece", "metric")).toBe("2");
+  });
+});
+
+describe("counted ingredients round like a cook would", () => {
+  it.each([
+    [0.1, 0.5],
+    [0.6, 0.5],
+    [0.8, 1],
+    [1.2, 1],
+    [1.3, 1.5],
+    [1.625, 1.5],
+    [1.8, 2],
+    [2.4, 2],
+    [3.125, 3],
+    [6.33, 6],
+    [6.5, 7],
+  ])("rounds %s to %s", (value, expected) => {
+    expect(roundCount(value)).toBe(expected);
+  });
+
+  it("never turns a real amount into nothing", () => {
+    expect(roundCount(0.01)).toBe(0.5);
+    expect(roundCount(0)).toBe(0);
+  });
+
+  it("formats counts with halves and whole numbers only, in both unit systems", () => {
+    expect(formatAmount(1.625, "piece", "us")).toBe("1½");
+    expect(formatAmount(3.125, "piece", "metric")).toBe("3");
+    expect(formatAmount(6.33, "clove", "us")).toBe("6");
+    expect(formatAmount(0.2, "can", "us")).toBe("½");
+  });
+
+  it("pluralizes by the rounded amount", () => {
+    expect(unitLabel("clove", 1.2)).toBe("clove");
+    expect(unitLabel("clove", 1.3)).toBe("cloves");
+    expect(unitLabel("can", 0.6)).toBe("can");
+  });
+
+  it("leaves measured amounts precise", () => {
+    expect(formatAmount(1.625, "tsp", "us")).toBe("1⅝");
+    expect(formatAmount(1.625, "cup", "us")).toBe("1⅝");
   });
 });
