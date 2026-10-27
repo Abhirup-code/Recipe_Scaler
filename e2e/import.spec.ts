@@ -68,7 +68,9 @@ test("fix a misread ingredient by editing an imported recipe", async ({ page }) 
 
   await expect(page).toHaveURL(recipeUrl);
   await expect(page.locator(".ingredients li", { hasText: "salt" })).toContainText("¼ tsp salt");
+  // The fixed amount now scales: 8 to 10 servings turns ¼ tsp into ⅓ tsp.
   await page.getByRole("button", { name: "More servings" }).click();
-  await expect(page.locator(".ingredients li", { hasText: "salt" })).toContainText("tsp salt");
-  await expect(page.locator(".ingredients li", { hasText: "salt" })).not.toContainText("¼");
+  await page.getByRole("button", { name: "More servings" }).click();
+  await expect(page.getByRole("group", { name: "Servings" })).toContainText("10 servings");
+  await expect(page.locator(".ingredients li", { hasText: "salt" })).toContainText("⅓ tsp salt");
 });
