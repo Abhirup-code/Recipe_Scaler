@@ -1,0 +1,10 @@
+# Advisories accepted after review. OpenSSF Scorecard and osv-scanner read this file.
+# Each entry expires, so it is checked again rather than ignored forever.
+
+[[IgnoredVulns]]
+id = "GHSA-g3hv-75wg-m249"
+ignoreUntil = 2027-02-01T00:00:00Z
+reason = """minimatch glob DoS. Only reachable through ESLint and its plugins (dev tools that never ship to \
+the site), and the glob patterns come from this repo's own config, not from users. Every minimatch \
+line below 11.0.1 is affected and the ESLint plugins in eslint-config-next still need the 3.x API, \
+so forcing 11.x would break linting. Recheck when eslint-config-next moves to a fixed version."""

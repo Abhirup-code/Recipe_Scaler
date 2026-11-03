@@ -24,5 +24,7 @@ Only the latest release, deployed at https://abhirup-code.github.io/Recipe_Scale
 - **Supply chain.** Dependencies are locked in `package-lock.json` and checked by Dependabot, `npm audit`, and
   `npm audit signatures`. Every GitHub Action is pinned to a full commit hash, and workflows default to read-only
   permissions.
+- **Reviewed exceptions.** A moderate advisory in a dev-only tool can be accepted in `osv-scanner.toml` with a
+  reason and an expiry date. Shipped dependencies get no exceptions: CI fails on any moderate or worse issue.
 - **Automated scanning** on every push and pull request: CodeQL (TypeScript and workflow code), gitleaks (the full
   git history), and OpenSSF Scorecard.
