@@ -43,8 +43,12 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
-      - name: Fail on known vulnerabilities of moderate severity or worse
-        run: npm audit --audit-level=moderate
+      # What ships to visitors is held to the strictest bar. Build and lint tools never ship, so
+      # they fail only on high or critical issues; accepted moderate ones are listed in osv-scanner.toml.
+      - name: Fail on moderate or worse vulnerabilities in shipped dependencies
+        run: npm audit --omit=dev --audit-level=moderate
+      - name: Fail on high or critical vulnerabilities in build and test tools
+        run: npm audit --audit-level=high
       - name: Check that installed packages match their published signatures
         run: |
           npm ci --ignore-scripts
